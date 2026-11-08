@@ -4,6 +4,29 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { colors } from '@/src/theme';
 
+import { useEffect } from 'react';
+import { useRouter } from 'expo-router';
+import * as Notifications from 'expo-notifications';
+import { getPushToken } from '@/src/notifications';
+import { registerDevice } from '@/src/api/endpoints';
+import { USE_MOCK } from '@/src/api/client';
+
+// inside TabsLayout():
+const router = useRouter();
+
+useEffect(() => {
+  if (USE_MOCK) return;
+  getPushToken().then((t) => { if (t) registerDevice(t).catch(console.warn); });
+}, []);
+
+const response = Notifications.useLastNotificationResponse();
+useEffect(() => {
+  const taskId = response?.notification.request.content.data?.taskId;
+  if (taskId && response?.actionIdentifier === Notifications.DEFAULT_ACTION_IDENTIFIER) {
+    router.push({ pathname: '/task/[id]', params: { id: String(taskId) } });
+  }
+}, [response]);
+
 export default function TabLayout() {
   return (
     <Tabs
