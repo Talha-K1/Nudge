@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { colors, spacing } from '../theme';
+import { colors, spacing } from '../../theme';
 
 export function EmptyState({ icon = 'checkmark-circle-outline', title, subtitle }:
   { icon?: keyof typeof Ionicons.glyphMap; title: string; subtitle?: string }) {
