@@ -1,6 +1,8 @@
 
 package com.nudge.backend.task;
 
+import com.nudge.backend.user.User;
+import com.nudge.backend.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,18 +13,19 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository,
+                       UserRepository userRepository) {
         this.taskRepository = taskRepository;
+        this.userRepository = userRepository;
     }
 
-    // Get all tasks
     @Transactional(readOnly = true)
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
 
-    // Get one task by ID
     @Transactional(readOnly = true)
     public Task getTaskById(Long id) {
         return taskRepository.findById(id)
@@ -30,28 +33,30 @@ public class TaskService {
                         new IllegalArgumentException("Task not found: " + id));
     }
 
-    // Create a task
-    public Task createTask(Task task) {
+    public Task createTask(Task task, Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("User not found: " + userId));
+
+        task.setUser(user);
+
         return taskRepository.save(task);
     }
 
-    // Update an existing task
-    public Task updateTask(Long id, Task updatedTask) {
-
+    public Task updateTask(Long id, TaskUpdateRequest request) {
         Task existingTask = getTaskById(id);
 
-        existingTask.setTitle(updatedTask.getTitle());
-        existingTask.setDescription(updatedTask.getDescription());
-        existingTask.setDueAt(updatedTask.getDueAt());
-        existingTask.setPriority(updatedTask.getPriority());
-        existingTask.setStatus(updatedTask.getStatus());
-        existingTask.setSourceEmailId(updatedTask.getSourceEmailId());
-        existingTask.setParentTaskId(updatedTask.getParentTaskId());
+        if (request.title() != null) existingTask.setTitle(request.title());
+        if (request.description() != null) existingTask.setDescription(request.description());
+        if (request.dueAt() != null) existingTask.setDueAt(request.dueAt());
+        if (request.priority() != null) existingTask.setPriority(request.priority());
+        if (request.status() != null) existingTask.setStatus(request.status());
+        if (request.sourceEmailId() != null) existingTask.setSourceEmailId(request.sourceEmailId());
+        if (request.parentTaskId() != null) existingTask.setParentTaskId(request.parentTaskId());
 
         return taskRepository.save(existingTask);
     }
 
-    // Delete a task
     public void deleteTask(Long id) {
         Task task = getTaskById(id);
         taskRepository.delete(task);

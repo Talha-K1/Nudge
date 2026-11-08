@@ -2,6 +2,8 @@
 package com.nudge.backend.task;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,16 +33,21 @@ public class TaskController {
     // POST /api/tasks
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Task createTask(@RequestBody Task task) {
-        return taskService.createTask(task);
+    public Task createTask(
+            @RequestBody Task task,
+            @AuthenticationPrincipal UserDetails userDetails
+    ) {
+        Long userId = Long.parseLong(userDetails.getUsername());
+        return taskService.createTask(task, userId);
     }
 
     // PATCH /api/tasks/{id}
     @PatchMapping("/{id}")
     public Task updateTask(
             @PathVariable Long id,
-            @RequestBody Task task) {
-        return taskService.updateTask(id, task);
+            @RequestBody TaskUpdateRequest request
+    ) {
+        return taskService.updateTask(id, request);
     }
 
     // DELETE /api/tasks/{id}

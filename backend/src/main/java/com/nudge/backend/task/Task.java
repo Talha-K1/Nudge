@@ -1,6 +1,7 @@
 
 package com.nudge.backend.task;
 
+import com.nudge.backend.user.User;
 import jakarta.persistence.*;
 import java.time.Instant;
 
@@ -32,7 +33,10 @@ public class Task {
 
     private Long parentTaskId;
 
-    // Required by JPA
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     protected Task() {
     }
 
@@ -40,8 +44,6 @@ public class Task {
         this.title = title;
         this.description = description;
     }
-
-    // Getters and setters
 
     public Long getId() {
         return id;
@@ -103,16 +105,19 @@ public class Task {
         this.parentTaskId = parentTaskId;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     public enum Priority {
-        HIGH,
-        MEDIUM,
-        LOW
+        HIGH, MEDIUM, LOW
     }
 
     public enum Status {
-        TODO,
-        IN_PROGRESS,
-        DONE,
-        SNOOZED
+        TODO, IN_PROGRESS, DONE, SNOOZED
     }
 }
