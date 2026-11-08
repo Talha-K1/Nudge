@@ -19,6 +19,18 @@ import type {
 
 let nextMockTaskId = 7;
 
+
+export const loginDemo = (): Promise<{ token: string }> => {
+  if (USE_MOCK) {
+    return mock({ token: 'mock-token' });
+  }
+
+  return api<{ token: string }>('/auth/demo', {
+    method: 'POST',
+  });
+};
+
+
 export const getBriefing = (): Promise<Briefing> =>
   USE_MOCK
     ? mock(buildBriefing())

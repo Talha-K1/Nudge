@@ -1,21 +1,24 @@
 
 import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from '@expo/vector-icons/Ionicons';
+
 import { colors } from '@/src/theme';
 
-export default function TabsLayout() {
+export default function TabLayout() {
   return (
-    <Tabs screenOptions={{ tabBarActiveTintColor: colors.primary }}>
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.muted,
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="home"
-              color={typeof color === 'string' ? color : colors.muted}
-              size={size}
-            />
+            <Ionicons name="home-outline" color={typeof color === 'string' ? color : colors.muted} size={size} />
           ),
         }}
       />
@@ -25,11 +28,7 @@ export default function TabsLayout() {
         options={{
           title: 'Tasks',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="checkbox"
-              color={typeof color === 'string' ? color : colors.muted}
-              size={size}
-            />
+            <Ionicons name="checkbox-outline" color={typeof color === 'string' ? color : colors.muted} size={size} />
           ),
         }}
       />
@@ -39,11 +38,7 @@ export default function TabsLayout() {
         options={{
           title: 'Subscriptions',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="card"
-              color={typeof color === 'string' ? color : colors.muted}
-              size={size}
-            />
+            <Ionicons name="repeat-outline" color={typeof color === 'string' ? color : colors.muted} size={size} />
           ),
         }}
       />
@@ -53,11 +48,7 @@ export default function TabsLayout() {
         options={{
           title: 'Settings',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons
-              name="settings"
-              color={typeof color === 'string' ? color : colors.muted}
-              size={size}
-            />
+            <Ionicons name="settings-outline" color={typeof color === 'string' ? color : colors.muted} size={size} />
           ),
         }}
       />
