@@ -18,42 +18,45 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    // GET /api/tasks
     @GetMapping
-    public List<Task> getAllTasks() {
-        return taskService.getAllTasks();
+    public List<Task> getAllTasks(
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = Long.parseLong(userDetails.getUsername());
+        return taskService.getAllTasks(userId);
     }
 
-    // GET /api/tasks/{id}
     @GetMapping("/{id}")
-    public Task getTaskById(@PathVariable Long id) {
-        return taskService.getTaskById(id);
+    public Task getTaskById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = Long.parseLong(userDetails.getUsername());
+        return taskService.getTaskById(id, userId);
     }
 
-    // POST /api/tasks
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Task createTask(
             @RequestBody Task task,
-            @AuthenticationPrincipal UserDetails userDetails
-    ) {
+            @AuthenticationPrincipal UserDetails userDetails) {
         Long userId = Long.parseLong(userDetails.getUsername());
         return taskService.createTask(task, userId);
     }
 
-    // PATCH /api/tasks/{id}
     @PatchMapping("/{id}")
     public Task updateTask(
             @PathVariable Long id,
-            @RequestBody TaskUpdateRequest request
-    ) {
-        return taskService.updateTask(id, request);
+            @RequestBody TaskUpdateRequest request,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = Long.parseLong(userDetails.getUsername());
+        return taskService.updateTask(id, request, userId);
     }
 
-    // DELETE /api/tasks/{id}
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
+    public void deleteTask(
+            @PathVariable Long id,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        Long userId = Long.parseLong(userDetails.getUsername());
+        taskService.deleteTask(id, userId);
     }
 }

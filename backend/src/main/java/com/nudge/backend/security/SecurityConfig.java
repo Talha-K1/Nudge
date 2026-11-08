@@ -30,6 +30,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/api/auth/demo",
+                                "/api/auth/demo-second",
                                 "/api/auth/google/start",
                                 "/error"
                         ).permitAll()

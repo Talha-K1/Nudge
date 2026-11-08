@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private static final String DEMO_EMAIL = "demo@nudge.local";
+    private static final String SECOND_DEMO_EMAIL = "demo2@nudge.local";
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
@@ -27,12 +28,19 @@ public class AuthController {
 
     @PostMapping("/demo")
     public ResponseEntity<DemoAuthResponse> demoLogin() {
-
         User demoUser = userRepository.findByEmail(DEMO_EMAIL)
                 .orElseGet(() -> userRepository.save(new User(DEMO_EMAIL)));
 
         String token = jwtService.generateToken(demoUser);
+        return ResponseEntity.ok(new DemoAuthResponse(token));
+    }
 
+    @PostMapping("/demo-second")
+    public ResponseEntity<DemoAuthResponse> secondDemoLogin() {
+        User secondUser = userRepository.findByEmail(SECOND_DEMO_EMAIL)
+                .orElseGet(() -> userRepository.save(new User(SECOND_DEMO_EMAIL)));
+
+        String token = jwtService.generateToken(secondUser);
         return ResponseEntity.ok(new DemoAuthResponse(token));
     }
 
