@@ -13,6 +13,8 @@ import { useRouter } from 'expo-router';
 import { useBriefing } from '@/src/api/hooks';
 import { Card } from '@/src/components/Card';
 import { PriorityChip } from '@/src/components/PriorityChip';
+import { ErrorBanner } from '@/src/components/ErrorBanner';
+import { ErrorState } from '@/src/components/ErrorState';
 import { EmptyState } from '@/src/components/EmptyState/EmptyState';
 
 import type { Task, Subscription } from '@/src/api/types';
@@ -57,14 +59,8 @@ export default function Home() {
     return <ActivityIndicator style={{ marginTop: 80 }} />;
   }
 
-  if (isError || !briefing) {
-    return (
-      <EmptyState
-        icon="cloud-offline-outline"
-        title="Couldn't load your briefing"
-        subtitle="Pull down to retry"
-      />
-    );
+  if (!briefing) {
+    return <ErrorState onRetry={() => void refetch()} />;
   }
 
   const taskRow = (task: Task) => (
