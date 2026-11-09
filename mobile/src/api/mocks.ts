@@ -123,8 +123,23 @@ export function mock<T>(value: T, ms = 350): Promise<T> {
 
 // Temporary placeholder until Student B confirms
 // the exact dashboard briefing response.
-export function buildBriefing(): null {
-  return null;
+export function buildBriefing() {
+  const open = db.tasks.filter(
+    (t) => t.status !== 'DONE' && !t.parentTaskId && t.dueAt
+  );
+  const overdue = open.filter((t) => daysUntil(t.dueAt!) < 0);
+  const dueToday = open.filter((t) => daysUntil(t.dueAt!) === 0);
+  const upcoming = open.filter((t) => {
+    const n = daysUntil(t.dueAt!);
+    return n > 0 && n <= 7;
+  });
+  const renewals = db.subscriptions.filter(
+    (s) => s.status === 'ACTIVE' && s.nextChargeDate && daysUntil(s.nextChargeDate) <= 14
+  );
+  return {
+    summary: `${dueToday.length} due today, ${overdue.length} overdue, ${renewals.length} renewals in the next 2 weeks.`,
+    overdue, dueToday, upcoming, renewals,
+  };
 }
 
 // Find a task in the mock database.

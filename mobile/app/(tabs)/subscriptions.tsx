@@ -18,6 +18,8 @@ import {
 
 import type { Subscription } from '@/src/api/types';
 
+import { daysUntil as daysUntilDate, parseDate } from '@/src/lib/dates';
+
 import { Card } from '@/src/components/Card';
 import { EmptyState } from '@/src/components/EmptyState/EmptyState';
 import { colors, spacing } from '@/src/theme';
@@ -32,16 +34,7 @@ const monthly = (s: Subscription) =>
 
 // Calculate the number of days until a subscription renews.
 function getDaysUntil(date: string): number {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const renewalDate = new Date(date);
-  renewalDate.setHours(0, 0, 0, 0);
-
-  return Math.ceil(
-    (renewalDate.getTime() - today.getTime()) /
-      (1000 * 60 * 60 * 24)
-  );
+  return daysUntilDate(date);
 }
 
 function formatCurrency(amount: number, currency: string): string {
@@ -69,7 +62,7 @@ function formatCycle(cycle: string): string {
 }
 
 function formatDate(date: string): string {
-  return new Date(date).toLocaleDateString('en-CA', {
+  return parseDate(date).toLocaleDateString('en-CA', {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
