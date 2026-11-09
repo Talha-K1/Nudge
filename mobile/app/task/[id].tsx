@@ -19,6 +19,8 @@ import {
   useDeleteTask,
 } from '@/src/api/hooks';
 
+import { ErrorState } from '@/src/components/ErrorState';
+
 import type { Email, Task } from '@/src/api/types';
 
 import { Card } from '@/src/components/Card';
@@ -35,7 +37,7 @@ export default function TaskDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 
-  const { data = [], isLoading } = useTasks();
+  const { data = [], isLoading, isError, refetch } = useTasks();
 
   const task = data.find((t) => String(t.id) === id) as
     | TaskWithEmail
@@ -58,7 +60,11 @@ export default function TaskDetailScreen() {
       </View>
     );
   }
-
+  
+  if (isError && data.length === 0) {
+    return <ErrorState onRetry={() => void refetch()} />;
+  }
+  
   if (!task) {
     return <EmptyState title="Task not found" />;
   }

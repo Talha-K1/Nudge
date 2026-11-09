@@ -26,6 +26,8 @@ import type { Priority } from '@/src/theme';
 
 import { Card } from '@/src/components/Card';
 import { PriorityChip } from '@/src/components/PriorityChip';
+import { ErrorBanner } from '@/src/components/ErrorBanner';
+import { ErrorState } from '@/src/components/ErrorState';
 import { EmptyState } from '@/src/components/EmptyState/EmptyState';
 
 import { daysUntil, formatDue } from '@/src/lib/dates';
@@ -64,6 +66,7 @@ export default function Tasks() {
   const {
     data = [],
     isLoading,
+    isError,
     refetch,
     isRefetching,
   } = useTasks();
@@ -240,6 +243,10 @@ export default function Tasks() {
     );
   }
 
+  if (isError && data.length === 0) {
+    return <ErrorState onRetry={() => void refetch()} />;
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -251,6 +258,7 @@ export default function Tasks() {
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={
           <View>
+            {isError && <ErrorBanner />}
             <Text style={styles.heading}>My Tasks</Text>
 
             <Text style={styles.subtitle}>
