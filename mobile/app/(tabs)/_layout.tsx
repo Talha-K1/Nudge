@@ -8,8 +8,10 @@ import { colors } from '@/src/theme';
 import { getPushToken } from '@/src/notifications';
 import { registerDevice } from '@/src/api/endpoints';
 import { USE_MOCK } from '@/src/api/client';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TabLayout() {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
 
   // Register the device for push notifications when using the real API.
@@ -48,6 +50,10 @@ export default function TabLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.muted,
+        sceneStyle: {
+          paddingTop: insets.top,
+          backgroundColor: colors.bg,
+},
       }}
     >
       <Tabs.Screen

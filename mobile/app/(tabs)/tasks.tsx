@@ -3,7 +3,9 @@ import { useState } from 'react';
 import {
   ActivityIndicator,
   FlatList,
+  KeyboardAvoidingView, 
   Modal,
+  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -302,132 +304,137 @@ export default function Tasks() {
       <Modal
         visible={modalVisible}
         transparent
-        animationType="slide"
+        animationType="fade"
         onRequestClose={closeModal}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>New Task</Text>
+        <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>New Task</Text>
 
-              <Pressable onPress={closeModal}>
-                <Ionicons
-                  name="close"
-                  size={26}
-                  color={colors.muted}
-                />
+                <Pressable onPress={closeModal}>
+                  <Ionicons
+                    name="close"
+                    size={26}
+                    color={colors.muted}
+                  />
+                </Pressable>
+              </View>
+
+              {/* Title */}
+              <Text style={styles.fieldLabel}>Task title *</Text>
+
+              <TextInput
+                style={styles.input}
+                placeholder="What do you need to do?"
+                placeholderTextColor={colors.muted}
+                value={title}
+                onChangeText={(value) => {
+                  setTitle(value);
+                  setTitleError('');
+                }}
+                maxLength={120}
+              />
+
+              {titleError ? (
+                <Text style={styles.errorText}>{titleError}</Text>
+              ) : null}
+
+              {/* Description */}
+              <Text style={styles.fieldLabel}>
+                Description (optional)
+              </Text>
+
+              <TextInput
+                style={[styles.input, styles.descriptionInput]}
+                placeholder="Add some details..."
+                placeholderTextColor={colors.muted}
+                value={description}
+                onChangeText={setDescription}
+                multiline
+              />
+
+              {/* Priority */}
+              <Text style={styles.fieldLabel}>Priority</Text>
+
+              <View style={styles.optionRow}>
+                {priorities.map((item) => {
+                  const active = priority === item;
+
+                  return (
+                    <Pressable
+                      key={item}
+                      style={[
+                        styles.optionButton,
+                        active && styles.activeOption,
+                      ]}
+                      onPress={() => setPriority(item)}
+                    >
+                      <Text
+                        style={[
+                          styles.optionText,
+                          active && styles.activeOptionText,
+                        ]}
+                      >
+                        {item.charAt(0) + item.slice(1).toLowerCase()}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              {/* Due date */}
+              <Text style={styles.fieldLabel}>Due date</Text>
+
+              <View style={styles.dueChoiceRow}>
+                {dueChoices.map((item) => {
+                  const active = dueChoice === item.value;
+
+                  return (
+                    <Pressable
+                      key={item.value}
+                      style={[
+                        styles.dueChoice,
+                        active && styles.activeOption,
+                      ]}
+                      onPress={() => setDueChoice(item.value)}
+                    >
+                      <Text
+                        style={[
+                          styles.dueChoiceText,
+                          active && styles.activeOptionText,
+                        ]}
+                      >
+                        {item.label}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
+              </View>
+
+              {/* Save */}
+              <Pressable
+                style={[
+                  styles.saveButton,
+                  (!title.trim() || createTask.isPending) &&
+                    styles.disabledButton,
+                ]}
+                onPress={saveTask}
+                disabled={!title.trim() || createTask.isPending}
+              >
+                {createTask.isPending ? (
+                  <ActivityIndicator color="#FFFFFF" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Save Task</Text>
+                )}
               </Pressable>
             </View>
-
-            {/* Title */}
-            <Text style={styles.fieldLabel}>Task title *</Text>
-
-            <TextInput
-              style={styles.input}
-              placeholder="What do you need to do?"
-              placeholderTextColor={colors.muted}
-              value={title}
-              onChangeText={(value) => {
-                setTitle(value);
-                setTitleError('');
-              }}
-              maxLength={120}
-            />
-
-            {titleError ? (
-              <Text style={styles.errorText}>{titleError}</Text>
-            ) : null}
-
-            {/* Description */}
-            <Text style={styles.fieldLabel}>
-              Description (optional)
-            </Text>
-
-            <TextInput
-              style={[styles.input, styles.descriptionInput]}
-              placeholder="Add some details..."
-              placeholderTextColor={colors.muted}
-              value={description}
-              onChangeText={setDescription}
-              multiline
-            />
-
-            {/* Priority */}
-            <Text style={styles.fieldLabel}>Priority</Text>
-
-            <View style={styles.optionRow}>
-              {priorities.map((item) => {
-                const active = priority === item;
-
-                return (
-                  <Pressable
-                    key={item}
-                    style={[
-                      styles.optionButton,
-                      active && styles.activeOption,
-                    ]}
-                    onPress={() => setPriority(item)}
-                  >
-                    <Text
-                      style={[
-                        styles.optionText,
-                        active && styles.activeOptionText,
-                      ]}
-                    >
-                      {item.charAt(0) + item.slice(1).toLowerCase()}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-
-            {/* Due date */}
-            <Text style={styles.fieldLabel}>Due date</Text>
-
-            <View style={styles.dueChoiceRow}>
-              {dueChoices.map((item) => {
-                const active = dueChoice === item.value;
-
-                return (
-                  <Pressable
-                    key={item.value}
-                    style={[
-                      styles.dueChoice,
-                      active && styles.activeOption,
-                    ]}
-                    onPress={() => setDueChoice(item.value)}
-                  >
-                    <Text
-                      style={[
-                        styles.dueChoiceText,
-                        active && styles.activeOptionText,
-                      ]}
-                    >
-                      {item.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
-
-            {/* Save */}
-            <Pressable
-              style={[
-                styles.saveButton,
-                (!title.trim() || createTask.isPending) &&
-                  styles.disabledButton,
-              ]}
-              onPress={saveTask}
-              disabled={!title.trim() || createTask.isPending}
-            >
-              {createTask.isPending ? (
-                <ActivityIndicator color="#FFFFFF" />
-              ) : (
-                <Text style={styles.saveButtonText}>Save Task</Text>
-              )}
-            </Pressable>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
     </View>
   );

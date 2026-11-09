@@ -11,8 +11,7 @@ import {
   View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-
+import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import {
   useTasks,
   useUpdateTask,
@@ -131,38 +130,27 @@ export default function TaskDetailScreen() {
     );
   }
 
-  return (
+return (
+  <>
+    <Stack.Screen
+      options={{
+        title: 'Task details',
+        headerRight: () => (
+          <Pressable onPress={confirmDelete} hitSlop={10}>
+            <Ionicons
+              name="trash-outline"
+              size={21}
+              color={colors.high}
+            />
+          </Pressable>
+        ),
+      }}
+    />
+
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.content}
     >
-      {/* Header */}
-      <View style={styles.header}>
-        <Pressable
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Ionicons
-            name="arrow-back"
-            size={22}
-            color={colors.text}
-          />
-        </Pressable>
-
-        <Text style={styles.headerTitle}>Task details</Text>
-
-        <Pressable
-          onPress={confirmDelete}
-          style={styles.deleteButton}
-        >
-          <Ionicons
-            name="trash-outline"
-            size={21}
-            color={colors.high}
-          />
-        </Pressable>
-      </View>
-
       {/* Main task information */}
       <Card>
         {isEditing ? (
@@ -421,6 +409,7 @@ export default function TaskDetailScreen() {
         )}
       </Card>
     </ScrollView>
+  </>
   );
 }
 
